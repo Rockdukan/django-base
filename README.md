@@ -60,6 +60,7 @@ python manage.py runserver
 
 ## Доступ к приложению:
 Админ-панель: http://127.0.0.1:8000/cabinet/
+![screenshot](screenshot.jpg)
 
 ## Middleware и Mixins: что и зачем
 
