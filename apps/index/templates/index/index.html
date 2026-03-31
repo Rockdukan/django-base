@@ -1,0 +1,20 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Django — Welcome</title>
+    <link rel="stylesheet" href="{% static 'project/css/style.css' %}">
+</head>
+<body class="cyber-welcome">
+    <div class="cyber-grid"></div>
+    <main class="cyber-main">
+        <div class="cyber-glow cyber-title">Django</div>
+        <p class="cyber-subtitle">базовый шаблон проекта</p>
+        <div class="cyber-line"></div>
+        <p class="cyber-meta">Готов к разработке. Админка: <a href="{% url 'admin:index' %}" class="cyber-link">/cabinet/</a></p>
+        <p class="cyber-year">{{ current_year }}</p>
+    </main>
+</body>
+</html>

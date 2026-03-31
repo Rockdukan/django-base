@@ -1,0 +1,24 @@
+{% extends "common/base.html" %}
+{% load i18n %}
+
+{% block title %}Выход{% endblock %}
+
+{% block content %}
+<div class="container container--narrow auth-in-site">
+    <div class="auth-card auth-card--in-site">
+        <a href="/" class="auth-back">← На главную</a>
+        <h1 class="title">Выход</h1>
+        <p class="auth-lead">Вы уверены, что хотите выйти?</p>
+        <form method="post" action="{% url 'account_logout' %}" class="auth-form">
+            {% csrf_token %}
+            {% if redirect_field_value %}
+            <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+            {% endif %}
+            <button type="submit" class="btn btn-primary btn-block">Выйти</button>
+        </form>
+        <p class="auth-footer mt-3">
+            <a href="/">Отмена</a>
+        </p>
+    </div>
+</div>
+{% endblock %}

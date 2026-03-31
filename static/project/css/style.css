@@ -1,0 +1,92 @@
+/* Django-киберпанк: приветственная страница и переопределения */
+
+:root {
+  --cyber-bg: #0a0e14;
+  --cyber-surface: #0d1117;
+  --cyber-cyan: #00d4aa;
+  --cyber-magenta: #d946ef;
+  --cyber-green: #22c55e;
+  --cyber-text: #e2e8f0;
+  --cyber-muted: #64748b;
+  --cyber-glow-cyan: rgba(0, 212, 170, 0.4);
+  --cyber-glow-magenta: rgba(217, 70, 239, 0.25);
+}
+
+.cyber-welcome {
+  min-height: 100vh;
+  background: var(--cyber-bg);
+  color: var(--cyber-text);
+  font-family: "SF Mono", "Consolas", "Monaco", "JetBrains Mono", monospace;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.cyber-grid {
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(0, 212, 170, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 212, 170, 0.03) 1px, transparent 1px);
+  background-size: 24px 24px;
+  pointer-events: none;
+}
+
+.cyber-main {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  padding: 2rem;
+}
+
+.cyber-title {
+  font-size: clamp(3rem, 12vw, 6rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--cyber-cyan);
+  text-shadow: 0 0 40px var(--cyber-glow-cyan);
+  margin: 0 0 0.25rem;
+  line-height: 1;
+}
+
+.cyber-subtitle {
+  font-size: 1.25rem;
+  color: var(--cyber-muted);
+  margin: 0 0 1.5rem;
+  letter-spacing: 0.2em;
+  text-transform: lowercase;
+}
+
+.cyber-line {
+  width: 120px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--cyber-cyan), var(--cyber-magenta), transparent);
+  margin: 0 auto 1.5rem;
+  box-shadow: 0 0 12px var(--cyber-glow-magenta);
+}
+
+.cyber-meta {
+  font-size: 0.9rem;
+  color: var(--cyber-muted);
+  margin: 0 0 2rem;
+}
+
+.cyber-link {
+  color: var(--cyber-cyan);
+  text-decoration: none;
+  transition: color 0.2s, text-shadow 0.2s;
+}
+
+.cyber-link:hover {
+  color: var(--cyber-green);
+  text-shadow: 0 0 8px var(--cyber-glow-cyan);
+}
+
+.cyber-year {
+  font-size: 0.75rem;
+  color: var(--cyber-muted);
+  opacity: 0.7;
+  margin: 0;
+}
