@@ -38,7 +38,7 @@ migrate-prod:	## Применить миграции (production)
 	uv run manage.py migrate --settings=core.settings.production
 
 run:	## Запустить сервер (development)
-	uv run python manage.py runserver 0.0.0.0:8050 --settings=core.settings.development
+	uv run python manage.py runserver --settings=core.settings.development
 
 run-prod:	## Запустить сервер (production)
 	uv run manage.py runserver --settings=core.settings.production
