@@ -1,7 +1,11 @@
-# -*- coding: utf-8 -*-
-import os, sys
-sys.path.insert(0, '/var/www/u3151278/data/www/airstratos.ru')
-sys.path.insert(1, '/var/www/u3151278/data/www/airstratos.ru/.venv/lib/python3.10/site-packages')
-os.environ['DJANGO_SETTINGS_MODULE'] = 'core.settings.production'
+import os
+from pathlib import Path
+
 from django.core.wsgi import get_wsgi_application
+
+PROJECT_ROOT = Path(__file__).resolve().parent
+
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", os.environ.get("DJANGO_SETTINGS_MODULE", "core.settings.production"))
+os.environ.setdefault("PYTHONPATH", str(PROJECT_ROOT))
+
 application = get_wsgi_application()

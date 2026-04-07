@@ -156,6 +156,14 @@ JAZZMIN_UI_TWEAKS = {
 }
 
 # ------------------ ПРИМЕРЫ ИСПОЛЬЗОВАНИЯ -------------------
+# Примеры ниже оставлены как подсказки, но вынесены в строки, чтобы:
+# - не тянуть Django/модели в settings-компонент
+# - не ломать линтинг (E402/F401/F811) и импорт настроек
+#
+# При необходимости скопируйте код в `admin.py` соответствующего приложения и
+# адаптируйте под свои модели.
+
+JAZZMIN_EXAMPLES = r"""
 # Пример 1: Настройка пользовательского формата страницы изменения для модели
 
 from django.contrib import admin
@@ -165,27 +173,11 @@ from myapp.models import Book
 @admin.register(Book)
 class BookAdmin(admin.ModelAdmin):
     fieldsets = (
-        (
-            "Основная информация",
-            {
-                "fields": ("title", "author", "published_date"),
-            },
-        ),
-        (
-            "Дополнительно",
-            {
-                "fields": ("isbn", "pages", "language"),
-            },
-        ),
-        (
-            "Метаданные",
-            {
-                "fields": ("created_at", "updated_at"),
-            },
-        ),
+        ("Основная информация", {"fields": ("title", "author", "published_date")}),
+        ("Дополнительно", {"fields": ("isbn", "pages", "language")}),
+        ("Метаданные", {"fields": ("created_at", "updated_at")}),
     )
 
-    # Порядок отображения секций на странице
     jazzmin_section_order = ("Основная информация", "Дополнительно", "Метаданные")
 
 
@@ -196,12 +188,28 @@ class BookAdmin(admin.ModelAdmin):
 class BookAdmin(admin.ModelAdmin):
     list_filter = ("author", "genre", "language")
 
-    # Рендерить отфильтрованные опции только после ввода минимального количества символов
     filter_input_length = {
-        "author": 3,  # Отображать варианты автора только после ввода 3 символов
-        "genre": 2,  # Отображать варианты жанра только после ввода 2 символов
+        "author": 3,
+        "genre": 2,
     }
 
+
+# Пример 4: Пользовательский дашборд с Jazzmin
+
+from django.utils.translation import gettext_lazy as _
+from jazzmin.dashboard import Dashboard, modules
+
+
+class CustomIndexDashboard(Dashboard):
+    columns = 3
+
+    def init_with_context(self, context):
+        self.children.append(
+            modules.AppList(_("Каталог"), models=("myapp.book", "myapp.author", "myapp.genre"), column=0)
+        )
+        self.children.append(modules.AppList(_("Пользователи"), models=("django.contrib.auth.*",), column=1))
+        self.children.append(modules.RecentActions(_("Последние действия"), limit=10, column=2))
+"""
 
 # Пример 3: Добавление дополнительных действий в форму модели
 # Создайте шаблон в каталоге templates/admin/myapp/book/submit_line.html
@@ -221,85 +229,3 @@ EXAMPLE_SUBMIT_LINE_TEMPLATE = """
 </div>
 {% endblock %}
 """
-
-
-# И добавьте обработку в классе админки:
-@admin.register(Book)
-class BookAdmin(admin.ModelAdmin):
-    # ... другие настройки ...
-
-    def response_change(self, request, obj):
-        ret = super().response_change(request, obj)
-
-        if "_publish" in request.POST:
-            obj.status = "published"
-            obj.save()
-            self.message_user(request, "Книга опубликована успешно")
-            return ret
-        return ret
-
-
-# Пример 4: Пользовательский дашборд с Jazzmin
-# Создайте файл dashboard.py в корне вашего проекта
-
-from django.utils.translation import gettext_lazy as _
-from jazzmin.dashboard import Dashboard, modules
-
-
-class CustomIndexDashboard(Dashboard):
-    columns = 3
-
-    def init_with_context(self, context):
-        # Приложения
-        self.children.append(
-            modules.AppList(
-                _("Каталог"),
-                models=("myapp.book", "myapp.author", "myapp.genre"),
-                column=0,
-            )
-        )
-
-        # Пользователи и группы
-        self.children.append(
-            modules.AppList(
-                _("Пользователи"),
-                models=("django.contrib.auth.*",),
-                column=1,
-            )
-        )
-
-        # Последние действия
-        self.children.append(
-            modules.RecentActions(
-                _("Последние действия"),
-                limit=10,
-                column=2,
-            )
-        )
-
-        # Внешние ссылки
-        self.children.append(
-            modules.LinkList(
-                _("Внешние ресурсы"),
-                children=[
-                    {
-                        "title": _("Документация Django"),
-                        "url": "https://docs.djangoproject.com/",
-                        "external": True,
-                    },
-                    {
-                        "title": _("Документация Jazzmin"),
-                        "url": "https://django-jazzmin.readthedocs.io/",
-                        "external": True,
-                    },
-                ],
-                column=2,
-            )
-        )
-
-
-# И настройте его в settings.py:
-# JAZZMIN_SETTINGS = {
-#     ...
-#     "custom_dashboard": "myproject.dashboard.CustomIndexDashboard",
-# }

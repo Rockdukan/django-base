@@ -70,6 +70,14 @@ SLICK_REPORTING_SETTINGS = {
 CRISPY_TEMPLATE_PACK = "bootstrap4"
 
 # ------------------ ПРИМЕРЫ ИСПОЛЬЗОВАНИЯ -------------------
+# Примеры ниже оставлены как подсказки, но вынесены в строки, чтобы:
+# - не тянуть Django/модели в settings-компонент
+# - не ломать линтинг (E402/F401/F811) и импорт настроек
+#
+# При необходимости скопируйте код в отдельный модуль приложения (например,
+# `apps/analytics/reports.py`) и адаптируйте под свои модели.
+
+SLICK_REPORTING_EXAMPLES = r"""
 # Пример 1: Простой отчет по группам (продажи по продуктам)
 
 from django.db.models import Sum
@@ -80,36 +88,19 @@ from .models import Sales
 
 
 class ProductSalesReport(ReportView):
-    # Основная модель для отчета
     report_model = Sales
-
-    # Поле даты для фильтрации
     date_field = "date"
-
-    # Группировка по продукту
     group_by = "product"
 
-    # Колонки отчета
     columns = [
-        "name",  # Имя продукта
+        "name",
         ComputationField.create(method=Sum, field="value", name="value_sum", verbose_name="Сумма продаж"),
         ComputationField.create(method=Sum, field="quantity", name="quantity_sum", verbose_name="Количество продаж"),
     ]
 
-    # Настройки графиков
     chart_settings = [
-        Chart(
-            "Сумма продаж по продуктам",
-            Chart.BAR,
-            data_source=["value_sum"],
-            title_source=["name"],
-        ),
-        Chart(
-            "Объем продаж по продуктам",
-            Chart.PIE,
-            data_source=["quantity_sum"],
-            title_source=["name"],
-        ),
+        Chart("Сумма продаж по продуктам", Chart.BAR, data_source=["value_sum"], title_source=["name"]),
+        Chart("Объем продаж по продуктам", Chart.PIE, data_source=["quantity_sum"], title_source=["name"]),
     ]
 
 
@@ -121,27 +112,19 @@ class MonthlySalesReport(ReportView):
     date_field = "date"
     group_by = "product"
 
-    # Определение временного ряда (месяцы)
     time_series_pattern = "monthly"
-
-    # Колонки для временного ряда
     time_series_columns = [
         ComputationField.create(method=Sum, field="value", name="value_sum", verbose_name="Сумма продаж"),
     ]
 
     columns = [
         "name",
-        "__time_series__",  # Маркер для вставки колонок временного ряда
+        "__time_series__",
         ComputationField.create(method=Sum, field="value", name="total_value", verbose_name="Общая сумма"),
     ]
 
     chart_settings = [
-        Chart(
-            "Продажи по месяцам",
-            Chart.LINE,
-            data_source=["value_sum"],
-            title_source=["name"],
-        ),
+        Chart("Продажи по месяцам", Chart.LINE, data_source=["value_sum"], title_source=["name"]),
     ]
 
 
@@ -153,33 +136,22 @@ class ProductCountrySalesReport(ReportView):
     date_field = "date"
     group_by = "product"
 
-    # Поле для перекрестной таблицы
     crosstab_field = "client__country"
-
-    # Колонки для перекрестной таблицы
     crosstab_columns = [
         ComputationField.create(method=Sum, field="value", name="value_sum", verbose_name="Сумма продаж"),
     ]
 
-    # ID для перекрестной таблицы (страны)
     crosstab_ids = ["US", "UK", "DE", "FR"]
-
-    # Включить остаток (прочие страны)
     crosstab_compute_remainder = True
 
     columns = [
         "name",
-        "__crosstab__",  # Маркер для вставки колонок перекрестной таблицы
+        "__crosstab__",
         ComputationField.create(method=Sum, field="value", name="total_value", verbose_name="Общая сумма"),
     ]
 
     chart_settings = [
-        Chart(
-            "Продажи по странам",
-            Chart.BAR,
-            data_source=["value_sum"],
-            title_source=["name"],
-        ),
+        Chart("Продажи по странам", Chart.BAR, data_source=["value_sum"], title_source=["name"]),
     ]
 
 
@@ -191,60 +163,28 @@ from slick_reporting.views import ListReportView
 class LatestSalesList(ListReportView):
     report_model = Sales
     date_field = "date"
-
-    # Колонки для отображения
-    columns = [
-        "date",
-        "product__name",
-        "client__name",
-        "quantity",
-        "price",
-        "value",
-    ]
-
-    # Порядок сортировки
+    columns = ["date", "product__name", "client__name", "quantity", "price", "value"]
     default_order_by = "-date"
-
-    # Ограничение количества записей
     limit_records = 10
-
-    # Фильтры, доступные в форме
     filters = ["product", "client", "date"]
 
 
 # Пример 5: Создание собственного вычисляемого поля
 
-from django.db.models import Avg, Sum
+from django.db.models import Avg
 from slick_reporting.decorators import report_field_register
 from slick_reporting.fields import ComputationField
 
 
-# Регистрация нового вычисляемого поля
 @report_field_register
 class AverageSalePrice(ComputationField):
     name = "avg_sale_price"
     verbose_name = "Средняя цена продажи"
     calculation_field = "price"
     calculation_method = Avg
+"""
 
-
-# Использование в отчете
-
-
-class ProductPriceReport(ReportView):
-    report_model = Sales
-    date_field = "date"
-    group_by = "product"
-
-    columns = [
-        "name",
-        "avg_sale_price",  # Использование по имени
-        # Или можно использовать класс напрямую
-        # AverageSalePrice,
-    ]
-
-
-# Пример 6: Добавление отчетов на дашборд
+# Пример 6: Добавление отчетов на дашборд (фрагмент шаблона)
 
 # В шаблоне dashboard.html:
 DASHBOARD_TEMPLATE_EXAMPLE = """
@@ -277,56 +217,3 @@ DASHBOARD_TEMPLATE_EXAMPLE = """
     {% get_charts_media "all" %}
 {% endblock %}
 """
-
-
-# Пример 7: Настройка формы фильтрации
-
-from django import forms
-from slick_reporting.forms import BaseReportForm
-
-
-class CustomSalesFilterForm(BaseReportForm, forms.Form):
-    start_date = forms.DateField(
-        required=False, label="Начальная дата", widget=forms.DateInput(attrs={"type": "date"})
-    )
-    end_date = forms.DateField(required=False, label="Конечная дата", widget=forms.DateInput(attrs={"type": "date"}))
-    price_range = forms.ChoiceField(
-        choices=[("all", "Все"), ("low", "До 1000"), ("medium", "1000-5000"), ("high", "Свыше 5000")],
-        required=False,
-        label="Ценовой диапазон",
-    )
-
-    def get_filters(self):
-        kw_filters = {}
-        q_filters = []
-
-        if self.cleaned_data["price_range"] == "low":
-            kw_filters["price__lt"] = 1000
-        elif self.cleaned_data["price_range"] == "medium":
-            kw_filters["price__gte"] = 1000
-            kw_filters["price__lt"] = 5000
-        elif self.cleaned_data["price_range"] == "high":
-            kw_filters["price__gte"] = 5000
-
-        return q_filters, kw_filters
-
-    def get_start_date(self):
-        return self.cleaned_data["start_date"]
-
-    def get_end_date(self):
-        return self.cleaned_data["end_date"]
-
-
-# Использование кастомной формы в отчете
-
-
-class SalesWithCustomFilterReport(ReportView):
-    report_model = Sales
-    date_field = "date"
-    group_by = "product"
-    form_class = CustomSalesFilterForm
-
-    columns = [
-        "name",
-        ComputationField.create(method=Sum, field="value", name="value_sum", verbose_name="Сумма продаж"),
-    ]

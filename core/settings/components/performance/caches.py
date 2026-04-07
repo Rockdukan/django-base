@@ -7,24 +7,36 @@
 3. Определение параметров хранения кэшированных данных
 """
 
+import os
+
 from django.conf import settings
 
 # ------------------ ОСНОВНЫЕ НАСТРОЙКИ КЭША -------------------
+# Бэкенд кэширования.
+# Django поддерживает несколько типов бэкендов для кэширования:
+# 1. "django.core.cache.backends.db.DatabaseCache" - кэширование в БД
+# 2. "django.core.cache.backends.file.FileBasedCache" - файловое кэширование
+# 3. "django.core.cache.backends.locmem.LocMemCache" - кэширование в памяти
+# 4. "django.core.cache.backends.dummy.DummyCache" - фиктивный кэш
+# 5. "django.core.cache.backends.memcached.PyMemcacheCache" - Memcached
+# 6. "django.core.cache.backends.memcached.PyLibMCCache" - Memcached
+# 7. "django.core.cache.backends.redis.RedisCache" - Redis
+CACHE_URL = os.environ.get("CACHE_URL", "locmemcache://")
 
-""" Бэкенд кэширования
-Django поддерживает несколько типов бэкендов для кэширования:
-1. 'django.core.cache.backends.db.DatabaseCache' - кэширование в БД
-2. 'django.core.cache.backends.file.FileBasedCache' - файловое кэширование
-3. 'django.core.cache.backends.locmem.LocMemCache' - кэширование в памяти
-4. 'django.core.cache.backends.dummy.DummyCache' - фиктивный кэш
-5. 'django.core.cache.backends.memcached.PyMemcacheCache' - Memcached
-6. 'django.core.cache.backends.memcached.PyLibMCCache' - Memcached
-7. 'django.core.cache.backends.redis.RedisCache' - Redis
-"""
-CACHE_BACKEND = "django.core.cache.backends.locmem.LocMemCache"
-
-# Расположение кэша
-CACHE_LOCATION = "unique-snowflake"
+if CACHE_URL.startswith("locmemcache://"):
+    CACHE_BACKEND = "django.core.cache.backends.locmem.LocMemCache"
+    CACHE_LOCATION = "unique-snowflake"
+elif CACHE_URL.startswith("filecache://"):
+    CACHE_BACKEND = "django.core.cache.backends.filebased.FileBasedCache"
+    CACHE_LOCATION = CACHE_URL.removeprefix("filecache://") or "/tmp/django-cache"
+elif CACHE_URL.startswith("dbcache://"):
+    CACHE_BACKEND = "django.core.cache.backends.db.DatabaseCache"
+    CACHE_LOCATION = CACHE_URL.removeprefix("dbcache://") or "django_cache"
+else:
+    # Для нестандартных схем (например, redis://) задавайте BACKEND/OPTIONS вручную
+    # или добавьте поддержку нужной схемы в этом компоненте.
+    CACHE_BACKEND = "django.core.cache.backends.locmem.LocMemCache"
+    CACHE_LOCATION = "unique-snowflake"
 
 # Время жизни кэшированных данных (в секундах)
 CACHE_TIMEOUT = 300  # 5 минут

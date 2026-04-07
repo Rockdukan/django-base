@@ -12,8 +12,6 @@ import environ
 
 env = environ.Env()
 
-SECRET_KEY = env.str("SECRET_KEY")
-
 # ----------------- НАСТРОЙКИ ЗАЩИТЫ HTTP-ЗАГОЛОВКОВ -------------------
 
 # HTTP Strict Transport Security (HSTS)

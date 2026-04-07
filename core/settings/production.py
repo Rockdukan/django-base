@@ -1,5 +1,3 @@
-from split_settings.tools import include
-
 from .base import *
 
 # -------------------------- DEBUG SETTINGS ----------------------------
@@ -38,87 +36,13 @@ CORS_ALLOW_CREDENTIALS = True
 # "django.core.mail.backends.dummy.EmailBackend" - подавление отправки
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 
-# ------------------------ MIDDLEWARE SETTINGS -------------------------
-MIDDLEWARE = [
-    "django.middleware.security.SecurityMiddleware",
-    "core.middlewares.healthcheck.HealthcheckMiddleware",
-    "core.middlewares.request_id.RequestIdMiddleware",
-    "django.contrib.sessions.middleware.SessionMiddleware",
-    "django.middleware.locale.LocaleMiddleware",
-    "core.middlewares.admin_language.AdminLanguageMiddleware",
-    "django.middleware.common.CommonMiddleware",
-    "django.middleware.csrf.CsrfViewMiddleware",
-    "django.contrib.auth.middleware.AuthenticationMiddleware",
-    "django.contrib.messages.middleware.MessageMiddleware",
-    "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "django.middleware.gzip.GZipMiddleware",
-    "core.middlewares.AddContentTypeOptionsMiddleware",
-    "core.middlewares.ReferrerPolicyMiddleware",
-    "core.middlewares.PermissionsPolicyMiddleware",
-    "core.middlewares.request_log_middleware.RequestLogMiddleware",
-]
-
-# ------------------------- TEMPLATE SETTINGS --------------------------
-TEMPLATES = [
-    {
-        "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [BASE_DIR / "apps" / "common" / "templates", "templates"],
-        "APP_DIRS": True,
-        "OPTIONS": {
-            "context_processors": [
-                # ------------------ DJANGO -------------------
-                "django.contrib.auth.context_processors.auth",
-                "django.contrib.messages.context_processors.messages",
-                "django.template.context_processors.request",
-                "django.template.context_processors.debug",
-                # ------------------ OTHER --------------------
-                "core.context_processors.current_date_info",
-            ],
-        },
-    },
-]
-
-# -------------------------- INSTALLED APPS ----------------------------
-INSTALLED_APPS = [
-    # ---------------- ADMIN ------------------
-    "lucus",
-    # ------------------ DJANGO -------------------
-    "django.contrib.admin",
-    "django.contrib.auth",
-    "django.contrib.contenttypes",
-    "django.contrib.messages",
-    "django.contrib.redirects",
-    "django.contrib.sessions",
-    "django.contrib.sites",
-    "django.contrib.sitemaps",
-    "django.contrib.staticfiles",
-    "solo",
-    # ----------------- PROJECT -------------------
-    "apps.index",
-]
-
-# ------------------------ ADDITIONAL SETTINGS -------------------------
-include(
-    "components/api/rest_framework.py",
-    "components/admin_tools/auditlog.py",
-    "components/admin_tools/log_viewer.py",
-    "components/admin_tools/constance.py",
-    "components/tasks/django_celery_beat.py",
-    "components/tasks/django_celery_results.py",
-    "components/database/sqlite.py",
-    "components/file_managers/filer.py",
-    "components/security/base.py",
-    "components/security/content_security.py",
-    "components/security/cors.py",
-    "components/security/csrf.py",
-    "components/security/orm_security.py",
-    "components/security/session.py",
-    "components/security/throttling.py",
-    "components/performance/caches.py",
-    "components/performance/compression.py",
-    "components/internationalization/base.py",
-    "components/internationalization/modeltranslation.py",
-)
+EMAIL_HOST = env.str("EMAIL_HOST", default="localhost")
+EMAIL_PORT = env.int("EMAIL_PORT", default=25)
+EMAIL_HOST_USER = env.str("EMAIL_HOST_USER", default="")
+EMAIL_HOST_PASSWORD = env.str("EMAIL_HOST_PASSWORD", default="")
+EMAIL_USE_TLS = env.bool("EMAIL_USE_TLS", default=False)
+EMAIL_USE_SSL = env.bool("EMAIL_USE_SSL", default=False)
+DEFAULT_FROM_EMAIL = env.str("DEFAULT_FROM_EMAIL", default="webmaster@localhost")
 
 SESSION_SAVE_EVERY_REQUEST = True
 CSRF_REFERER_CHECK_ORIGIN = False

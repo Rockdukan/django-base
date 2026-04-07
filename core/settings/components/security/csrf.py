@@ -47,7 +47,13 @@ CSRF_REFERER_CHECK_ORIGIN = True
 # ------------------ ДОВЕРЕННЫЕ ИСТОЧНИКИ -------------------
 
 # Список доверенных источников для CSRF
-CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[])
+CSRF_TRUSTED_ORIGINS = env.list(
+    "CSRF_TRUSTED_ORIGINS",
+    default=[
+        "http://127.0.0.1:8050",
+        "http://localhost:8050",
+    ],
+)
 
 # ------------------ ДОПОЛНИТЕЛЬНЫЕ НАСТРОЙКИ -------------------
 

@@ -11,7 +11,7 @@
 CONSTANCE_BACKEND = "constance.backends.database.DatabaseBackend"
 
 CONSTANCE_CONFIG = {
-    "SITE_NAME": ("Штурман", "Название сайта"),
+    "SITE_NAME": ("Example", "Название сайта"),
     "CONTACT_EMAIL": ("admin@example.com", "Email для обратной связи"),
 }
 
